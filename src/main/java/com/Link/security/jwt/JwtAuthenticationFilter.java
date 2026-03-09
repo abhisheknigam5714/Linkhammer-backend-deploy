@@ -15,6 +15,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     // Execute at once for every new request---abstract interface
     @Autowired
@@ -51,5 +52,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
     //if we not add this it will break the chain
         filterChain.doFilter(request,response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        return path.startsWith("/api/auth/public");
     }
 }
