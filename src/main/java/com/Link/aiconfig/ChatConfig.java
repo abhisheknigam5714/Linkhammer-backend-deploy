@@ -1,4 +1,4 @@
-package com.Link.config;
+package com.Link.aiconfig;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;

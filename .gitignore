@@ -31,3 +31,24 @@ build/
 
 ### VS Code ###
 .vscode/
+# Environment secrets - NEVER commit these
+.env
+
+# Maven build output
+target/
+*.jar
+*.war
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.class
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

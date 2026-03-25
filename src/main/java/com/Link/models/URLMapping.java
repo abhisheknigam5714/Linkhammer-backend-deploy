@@ -15,7 +15,9 @@ public class URLMapping {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name = "original_url", columnDefinition = "LONGTEXT")
     private String originalUrl;
+    @Column(name = "short_url", length=100)
     private String shortUrl;
     private int clickCount = 0;
     private LocalDateTime createdDate;

@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+
+
+  mysql:
+    image: mysql:8.0
+    container_name: linkhammer-db
+    restart: always
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql   # data persists across restarts
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Spring Boot Backend ─────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: linkhammer-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy   # wait for MySQL to be ready
+    environment:
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${DB_NAME}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      # JWT
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
+      # Gemini AI
+      SPRING_AI_OPENAI_API_KEY: ${GEMINI_API_KEY}
+      SPRING_AI_OPENAI_BASE_URL: https://generativelanguage.googleapis.com/v1beta/openai
+      SPRING_AI_OPENAI_CHAT_OPTIONS_MODEL: gemini-2.0-flash
+
+volumes:
+  mysql_data:
